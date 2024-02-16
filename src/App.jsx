@@ -1,10 +1,11 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer, useRef } from 'react'
 
 // useReducer
 // 1. Init state
+const localData = JSON.parse(localStorage.getItem('taskList'))
 const initState = {
   taskAdding: '',
-  taskList: []
+  taskList: localData ? localData : []
 }
 
 // 2. Action
@@ -24,6 +25,13 @@ const addTask = payload => {
     type: ADD_TASK,
     payload
   }
+}
+
+const removeTask = payload => {
+  return {
+    type: REMOVE_TASK,
+    payload
+  }
 
 }
 
@@ -40,6 +48,11 @@ const reducer = (state, action) => {
         ...state,
         taskList: [...state.taskList, action.payload],
       }
+    case REMOVE_TASK:
+      return {
+        ...state,
+        taskList: state.taskList.filter((task,index) => task && index !== action.payload)
+      }
     default: 
       throw new Error('Invalid action type')
   }
@@ -49,30 +62,40 @@ const reducer = (state, action) => {
 
 
 function App() {
+
   const [state, dispatch] = useReducer(reducer, initState)
 
   const { taskAdding, taskList } = state
+  
+  const inputRef = useRef()
 
   const handleSubmit = () => {
     dispatch(addTask(taskAdding))
     dispatch(setTask(''))
+
+    inputRef.current.focus()
   }
+
+  useEffect(() => {
+    localStorage.setItem('taskList', JSON.stringify(taskList))
+  }, [taskList])
 
   return (
     <div className="app">
       <h3>To-Do</h3>
       <div className='adding-bar'>
         <input
+          ref={inputRef}
           value={taskAdding}
           type="text"
           placeholder="Add a new task"
           onChange={(e) => dispatch(setTask(e.target.value))}
         />
-        <button onClick={handleSubmit}>Add</button>
+        <button className='add-btn' onClick={handleSubmit}>Add</button>
       </div>
       <ul>
         {taskList.map((task, index) => (
-          <li key={index}>{task} &times;</li>
+          <li key={index}>{task}<button className='remove-btn' onClick={() => dispatch(removeTask(index))}>&times;</button></li>
         ))}
       </ul>
     </div>
