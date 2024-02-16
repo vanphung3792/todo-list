@@ -9,27 +9,29 @@ const initState = {
 }
 
 // 2. Action
-const SET_TASK = 'set_task'
-const ADD_TASK = 'add_task'
-const REMOVE_TASK = 'remove_task'
+const ACTIONS = {
+  SET_TASK: 'set_task',
+  ADD_TASK: 'add_task',
+  REMOVE_TASK: 'remove_task'
+}
 
 const setTask = payload => {
   return {
-    type: SET_TASK,
+    type: ACTIONS.SET_TASK,
     payload
   }
 }
 
 const addTask = payload => {
   return {
-    type: ADD_TASK,
+    type: ACTIONS.ADD_TASK,
     payload
   }
 }
 
 const removeTask = payload => {
   return {
-    type: REMOVE_TASK,
+    type: ACTIONS.REMOVE_TASK,
     payload
   }
 
@@ -38,17 +40,17 @@ const removeTask = payload => {
 // 3. Reducer
 const reducer = (state, action) => {
   switch (action.type) {
-    case SET_TASK:
+    case ACTIONS.SET_TASK:
       return {
         ...state,
         taskAdding: action.payload
       }
-    case ADD_TASK:
+    case ACTIONS.ADD_TASK:
       return {
         ...state,
         taskList: [...state.taskList, action.payload],
       }
-    case REMOVE_TASK:
+    case ACTIONS.REMOVE_TASK:
       return {
         ...state,
         taskList: state.taskList.filter((task,index) => task && index !== action.payload)
